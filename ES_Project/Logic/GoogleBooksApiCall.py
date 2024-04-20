@@ -9,13 +9,17 @@ def get_books(query):
     url = "https://www.googleapis.com/books/v1/volumes"
     params = {
         "q": query,
+        "maxResults": 14
     }
     response = requests.get(url, params=params)
     if response.status_code == 200:
+        
         return response.json()
+        
     else:
         print("Error:", response.status_code)
         return None
+
 # 2- A function for getting books by genres if asked by the user
 def get_books_by_genre(genre):
     query = f"subject:{genre}"
