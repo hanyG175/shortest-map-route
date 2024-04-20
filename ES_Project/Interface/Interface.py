@@ -52,34 +52,34 @@ class BookRecommendationSystem(tk.Tk):
         # Function to add book cards to the grid      
     def setup_options(self):
         # Search section
-        search_frame = tk.LabelFrame(self.top_frame, text="Any Favourite Authors?", bg='#eeeeee')
+        search_frame = tk.LabelFrame(self.top_frame, text="Any Favourite Authors?",font=("bold"), bg='#eeeeee')
         search_frame.grid(row=0, column=0, padx=10, pady=5, sticky="nw")
 
         self.search_var = tk.StringVar()
-        tk.Entry(search_frame, textvariable=self.search_var, width=50).pack(side=tk.LEFT, padx=5)
-        tk.Button(search_frame, text='Search', command=self.on_search).pack(side=tk.LEFT, padx=5)
+        tk.Entry(search_frame, textvariable=self.search_var, width=50).pack(side=tk.LEFT, padx=5,pady=5)
+        tk.Button(search_frame, text='Search', command=self.on_search).pack(side=tk.LEFT, padx=5,pady=5)
 
         # Rating selection section
-        rating_frame = tk.LabelFrame(self.top_frame, text="Rating", bg='#eeeeee')
-        rating_frame.grid(row=1, column=1, padx=10, pady=5, sticky="nw")
+        rating_frame = tk.LabelFrame(self.top_frame, text="Rating",font=("bold"), bg='#eeeeee')
+        rating_frame.grid(row=1, column=1, padx=10, pady=5, sticky="nsew")
 
         self.rating_var = tk.DoubleVar()
         tk.Scale(rating_frame, from_=0, to=5, orient='horizontal', variable=self.rating_var).pack(fill=tk.X, padx=5)
         self.rating_label = tk.Label(rating_frame, text="Select minimum rating")
-        self.rating_label.pack(pady=5)
+        self.rating_label.pack(pady=5,padx=10)
         self.rating_var.trace("w", self.update_rating_label)
 
         # Publication year selection
-        year_frame = tk.LabelFrame(self.top_frame, text="Publication Year", bg='#eeeeee')
-        year_frame.grid(row=1, column=3, padx=10, pady=5, sticky="nw")
+        year_frame = tk.LabelFrame(self.top_frame, text="Publication Year",font=("bold"), bg='#eeeeee')
+        year_frame.grid(row=1, column=3, padx=10, pady=5, sticky="nsew")
 
         self.year_var = tk.IntVar()
         current_year = 2024  # Replace with the current year retrieved dynamically if needed
         ttk.Combobox(year_frame, textvariable=self.year_var, values=list(map(str,range(1900, current_year+1)))).pack(fill=tk.X, padx=5,pady=10)
         
         # Genre selection section
-        genre_frame = tk.LabelFrame(self.top_frame, text="Genres", bg='#eeeeee')
-        genre_frame.grid(row=1, column=0, padx=10, pady=5, sticky="nw")
+        genre_frame = tk.LabelFrame(self.top_frame, text="Genres",font=("bold"), bg='#eeeeee')
+        genre_frame.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
         self.genre_vars = {}
         for genre in self.genres:
@@ -88,8 +88,11 @@ class BookRecommendationSystem(tk.Tk):
             cb.grid(row=1, column=self.genres.index(genre), sticky='w', padx=10, pady=10)
 
         # Add more filtering options here using a similar pattern
-        b = tk.Button(self.top_frame, text='Load', command=self.on_search)
-        b.grid(row=2, column=0, padx=10, pady=5, sticky="nw")
+        button_frame = tk.Frame(self.top_frame, bg='#eeeeee')
+        b = tk.Button(button_frame, text='Load Inference Results',font=("bold"), command=self.on_search)
+        button_frame.grid(row=2, columnspan=4, padx=10, pady=5, sticky="nsew")
+        b.pack(padx=10,pady=10)
+        
     def update_rating_label(self, *args):
         rating = self.rating_var.get()
         self.rating_label.config(text=f'Select minimum rating: {rating:.1f}')
@@ -158,7 +161,7 @@ class BookRecommendationSystem(tk.Tk):
         min_rating = self.rating_var.get()
         year = self.year_var.get()
         print(author,selected_genres,min_rating,year)
-        books = infer_books(author,selected_genres)
+        books = []
         
         if year: 
             if not books:
@@ -185,6 +188,8 @@ class BookRecommendationSystem(tk.Tk):
             #     for book in books:
             #         if float(book) <= min_rating:
             #             books.remove(book)
+        
+        books += infer_books(author,selected_genres)
         
         google_books =  [] 
         for book in books:
